@@ -116,6 +116,7 @@ describe('User controller',()=>{
         password:'Gopi@123',
         number:'9988776655'
       })
+       console.log("hello")
       expect(response.status).toBe(200)
       expect(response.body).toEqual({message:"User Created Successfully"})
     })
