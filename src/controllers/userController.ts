@@ -65,4 +65,6 @@ const getLoginUser=async(req:RequestWithUser,res:Response)=>{
         res.status(500).send({error:"Internal Server Error"})
     }
 }
+
+
 export default {signUp,login,getLoginUser}
