@@ -12,7 +12,9 @@ const SECRET_KEY=process.env.SECRET_KEY
 const signUp=async(req:Request,res:Response)=>{
     try {
         const {name,email,password,number}=req.body
+        // console.log(req.body)
         const hashedPassword=await bcrypt.hash(password,10)
+        // console.log(hashedPassword)
         const user=await userModel.findOne({email:email})
         if(!user){
             const newUser=new userModel({

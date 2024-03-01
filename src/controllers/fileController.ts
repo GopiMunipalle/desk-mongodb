@@ -1,29 +1,31 @@
-import express, { Request, Response } from 'express';
-import productModel from '../models/ProductList';
+import cloudinary from "../utils/cloudinary";
+import streamifier from "streamifier";
 
 
-const uploadImages=(async (req: Request, res: Response) => {
-  try {
-    
-    const { name, productId, quantity, status, price, discountPrice } = req.body;
-
-    // const image = req.files[0].url;
-
-    const newProduct = await productModel.create({
-      name,
-      productId,
-      quantity,
-      status,
-      price,
-      discountPrice,
-      // image,
-    });
-
-    return res.status(201).json({ newProduct });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+const uploadImages = async (
+  files: Express.Multer.File[]
+): Promise<string[]> => {
+  return Promise.all(
+    files.map((file) => {
+      return new Promise<string>((resolve, reject) => {
+        const stream_to_cloud_pipe = cloudinary.uploader.upload_stream(
+          { folder: "desk-mongo" },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              if (result) {
+                resolve(result.secure_url);
+              } else {
+                reject(new Error("Upload result is undefined"));
+              }
+            }
+          }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream_to_cloud_pipe);
+      });
+    })
+  );
+};
 
 export default uploadImages;
