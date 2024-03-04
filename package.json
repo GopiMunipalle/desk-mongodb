@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest --watchAll ",
     "dev": "nodemon ./src/app.ts",
     "start": "node ./dist/app.js"
   },

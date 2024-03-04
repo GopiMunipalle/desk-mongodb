@@ -10,7 +10,7 @@ const connectDb=async()=>{
         console.log('Database is connected')
         return Promise.resolve()
     } catch (error) {
-        console.log(error)
+        console.log('error at db.ts',error)
         return Promise.reject(error)
     }
 }

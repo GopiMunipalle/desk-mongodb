@@ -5,13 +5,10 @@ import nodemailer from 'nodemailer'
 import { config } from "dotenv";
 config()
 
-
 const transport=nodemailer.createTransport({
     service:process.env.SERVICE,
-    host: process.env.USERMAIL,
-    port: 8081,
     auth:{
-        user:process.env.USERMAIL,
+        user:process.env.USEREMAIL,
         pass:process.env.PASS
     }
 })
@@ -78,7 +75,7 @@ const verifyOtp=async(req:Request,res:Response)=>{
             if(!verifyUserOtp){
                 return res.status(400).send({error:"Invalid Otp"})
             }
-            return res.status(200).send({message:"Otp Verification Successfull"})
+            return res.status(200).send({message:"Otp Verification Successful"})
         }
         return res.status(400).send({message:"Otp timed out"})
     } catch (error) {
