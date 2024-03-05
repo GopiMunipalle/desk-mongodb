@@ -20,7 +20,7 @@ const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
         return Promise.resolve();
     }
     catch (error) {
-        console.log(error);
+        console.log('error at db.ts', error);
         return Promise.reject(error);
     }
 });

@@ -21,8 +21,6 @@ connectDb()
       console.log(`Server running at http://localhost:${port}`);
     });
   })
-  .catch((error) => {
-    console.log('DB not connected', error);
-  });
+
 
 export default app;

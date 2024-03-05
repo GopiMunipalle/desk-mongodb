@@ -11,7 +11,6 @@ productRouter.post(
   "/upload",authMiddleware,upload.array("files", 3),addProductMiddleware,
  productController.AddProduct
 );
-productRouter.get('/productList',authMiddleware,productController.productList)
 productRouter.post('/uploadImage/:id',upload.array('files',2),productController.addImages)
 productRouter.delete('/deleteImage',productController.deleteImage)
 

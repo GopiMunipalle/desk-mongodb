@@ -21,7 +21,9 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password, number } = req.body;
+        // console.log(req.body)
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        // console.log(hashedPassword)
         const user = yield user_1.default.findOne({ email: email });
         if (!user) {
             const newUser = new user_1.default({

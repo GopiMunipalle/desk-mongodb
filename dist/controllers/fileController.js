@@ -12,25 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ProductList_1 = __importDefault(require("../models/ProductList"));
-const uploadImages = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { name, productId, quantity, status, price, discountPrice } = req.body;
-        // const image = req.files[0].url;
-        const newProduct = yield ProductList_1.default.create({
-            name,
-            productId,
-            quantity,
-            status,
-            price,
-            discountPrice,
-            // image,
+const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
+const streamifier_1 = __importDefault(require("streamifier"));
+const uploadImages = (files) => __awaiter(void 0, void 0, void 0, function* () {
+    return Promise.all(files.map((file) => {
+        return new Promise((resolve, reject) => {
+            const stream_to_cloud_pipe = cloudinary_1.default.uploader.upload_stream({ folder: "desk-mongo" }, (error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    if (result) {
+                        resolve(result.secure_url);
+                    }
+                    else {
+                        reject(new Error("Upload result is undefined"));
+                    }
+                }
+            });
+            streamifier_1.default.createReadStream(file.buffer).pipe(stream_to_cloud_pipe);
         });
-        return res.status(201).json({ newProduct });
-    }
-    catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-}));
+    }));
+});
 exports.default = uploadImages;

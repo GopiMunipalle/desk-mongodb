@@ -14,18 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const EmailOtp_1 = __importDefault(require("../models/EmailOtp"));
 const user_1 = __importDefault(require("../models/user"));
-const nodemailer_1 = __importDefault(require("nodemailer"));
+const emailTransport_1 = __importDefault(require("../utils/emailTransport"));
+// import nodemailer from 'nodemailer'
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-const transport = nodemailer_1.default.createTransport({
-    service: process.env.SERVICE,
-    host: process.env.USERMAIL,
-    port: 8081,
-    auth: {
-        user: process.env.USERMAIL,
-        pass: process.env.PASS
-    }
-});
+// export const transport=nodemailer.createTransport({
+//     service:process.env.SERVICE,
+//     auth:{
+//         user:process.env.USEREMAIL,
+//         pass:process.env.PASS
+//     }
+// })
 const sendOtp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email } = req.body;
@@ -54,8 +53,8 @@ const sendOtp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             subject: 'Otp Verification',
             text: `Your Otp is ${createdOtp}`
         };
-        let info = yield transport.sendMail(mailOptions);
-        return res.status(200).send({ message: `Otp sent to ${email}`, info });
+        let info = yield emailTransport_1.default.sendMail(mailOptions);
+        return res.status(200).send({ message: `Otp sent to ${email}` });
     }
     catch (error) {
         console.log(error);
@@ -80,15 +79,15 @@ const verifyOtp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(400).send({ error: "User not found" });
         }
         const currentTime = new Date().getTime();
-        const expirationTime = user.createdAt.getTime() + 1 * 60 * 1000;
-        console.log('exp', expirationTime);
-        console.log('current', currentTime);
+        const expirationTime = user.createdAt ? user.createdAt.getTime() + 2 * 60 * 1000 : 0;
+        console.log('expirationTime:', expirationTime);
+        console.log('currentTime:', currentTime);
         if (currentTime <= expirationTime) {
             const verifyUserOtp = yield EmailOtp_1.default.findOne({ otp: otp });
             if (!verifyUserOtp) {
                 return res.status(400).send({ error: "Invalid Otp" });
             }
-            return res.status(200).send({ message: "Otp Verification Successfull" });
+            return res.status(200).send({ message: "Otp Verification Successful" });
         }
         return res.status(400).send({ message: "Otp timed out" });
     }

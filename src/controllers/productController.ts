@@ -1,44 +1,8 @@
 import productModel from "../models/ProductList";
 import {Request,Response} from "express"
-import fetch from 'node-fetch'
 import uploadImages from "./fileController";
 import RequestWithUser from "../middlewares/customType";
 import userModel from "../models/user";
-
-const productList=async(req:Request,res:Response)=>{
-    try {
-        const url='https://fakestoreapi.com/products'
-        const response=await fetch(url)
-        const data=await response.json()
-        console.log(data)
-        for (let product of data){
-            let {id,title,price,image,rating}=product
-            let status=''
-            let discount=price-(price/5)
-            if(id<=10){
-                status="In Stock"
-                discount=price-(price/10)
-            }
-            else{
-                status="Out Of Stock"
-                discount=price-(price/15)
-            }
-            await productModel.insertMany([{
-                name:title,
-                productId:id,
-                quantity:rating.count,
-                status:status,
-                price:price,
-                discountPrice:discount,
-                image:[image]
-            }])
-        }
-        return res.status(200).send({message:"Products Added"})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({error:"Internal Server Error"})
-    }
-}
 
 const AddProduct=async (req: RequestWithUser, res: Response) => {
   try {
@@ -124,4 +88,4 @@ const deleteImage = async (req:RequestWithUser, res:Response) => {
   }
 };
 
-export default {productList,AddProduct,addImages,deleteImage}
+export default {AddProduct,addImages,deleteImage}

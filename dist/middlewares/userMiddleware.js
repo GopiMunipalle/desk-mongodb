@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.addProductMiddleware = exports.authMiddleware = exports.loginValidation = exports.singUpValidation = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
@@ -28,7 +29,7 @@ const singUpValidation = (req, res, next) => {
             errors.number = "Number must be containing 10 digits";
         }
         if (Object.keys(errors).length > 0) {
-            return res.send(errors);
+            return res.status(400).send(errors);
         }
         next();
     }
@@ -37,6 +38,7 @@ const singUpValidation = (req, res, next) => {
         return res.status(500).send({ error: "Internal Server Error" });
     }
 };
+exports.singUpValidation = singUpValidation;
 const loginValidation = (req, res, next) => {
     try {
         let errors = {};
@@ -49,7 +51,7 @@ const loginValidation = (req, res, next) => {
             errors.password = "Enter Valid Password";
         }
         if (Object.keys(errors).length > 0) {
-            return res.send(errors);
+            return res.status(400).send(errors);
         }
         next();
     }
@@ -58,6 +60,7 @@ const loginValidation = (req, res, next) => {
         return res.status(500).send({ error: "Internal Server Error" });
     }
 };
+exports.loginValidation = loginValidation;
 const authMiddleware = (req, res, next) => {
     try {
         let jwtToken = null;
@@ -82,4 +85,37 @@ const authMiddleware = (req, res, next) => {
         res.status(500).send({ error: "Internal Server Error" });
     }
 };
-exports.default = { singUpValidation, loginValidation, authMiddleware };
+exports.authMiddleware = authMiddleware;
+const addProductMiddleware = (req, res, next) => {
+    try {
+        const { name, productId, quantity, status, price, discountPrice } = req.body;
+        const errors = [];
+        if (!name || name.trim().length == 0) {
+            errors.push({ error: "Name field is Required" });
+        }
+        else if (!productId || productId.trim().length == 0) {
+            errors.push({ error: "Enter Valid Product id" });
+        }
+        else if (!quantity || quantity.trim().length == 0) {
+            errors.push({ error: "Enter Quantity" });
+        }
+        else if (!status || status.trim().length == 0) {
+            errors.push({ error: "Enter Product Status" });
+        }
+        else if (!price || price.trim().length == 0) {
+            errors.push({ error: "Enter product Price" });
+        }
+        else if (!discountPrice || discountPrice.trim().length == 0) {
+            errors.push({ error: "Enter discount price" });
+        }
+        if (errors && errors.length > 0) {
+            return res.status(400).send(errors);
+        }
+        next();
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).send({ error: "Internal Server error" });
+    }
+};
+exports.addProductMiddleware = addProductMiddleware;
