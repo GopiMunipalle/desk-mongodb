@@ -58,6 +58,7 @@ const getLoginUser=async(req:RequestWithUser,res:Response)=>{
     try {
         const email=req.email
         const user=await userModel.findOne({email})
+        console.log(user)
         if(!user){
             return res.status(404).send({error:"User not exists"})
         }

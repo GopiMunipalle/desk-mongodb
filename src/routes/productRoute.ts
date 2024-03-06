@@ -8,7 +8,7 @@ const upload=multer()
 
 
 productRouter.post(
-  "/upload",authMiddleware,upload.array("files", 3),addProductMiddleware,
+  "/upload",upload.array("files", 3),addProductMiddleware,authMiddleware,
  productController.AddProduct
 );
 productRouter.post('/uploadImage/:id',upload.array('files',2),productController.addImages)

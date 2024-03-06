@@ -7,14 +7,15 @@ import userModel from "../models/user";
 const AddProduct=async (req: RequestWithUser, res: Response) => {
   try {
     const {name,productId,quantity,status,price,discountPrice}=req.body
-
+ 
     var files = req.files as Express.Multer.File[];
-
+ 
     if (!files || files.length === 0) {
       return res.status(400).send({ error: "No files provided2" });
     }
     const fileUrls = await uploadImages(files);
     const email=req.email
+
     const user=await userModel.findOne({email:email})
     if(!user){
       return res.status(400).send({error:"Invalid User"})
@@ -40,7 +41,6 @@ const addImages = async (req:Request, res:Response) => {
     const {id}=req.params
     console.log('id',id)
     const files = req.files as Express.Multer.File[];
-    console.log('files',files)
     if (!files || files.length === 0) {
       return res.status(400).send({ error: "No files provided3" });
     }

@@ -6,7 +6,7 @@ config()
 const SECRET_KEY=process.env.SECRET_KEY
 
 export const singUpValidation=(req:Request,res:Response,next:NextFunction)=>{
-    try {
+
         let errors:{[keys:string]:string}={}
         // let emailFormate=/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
         const {name,email,password,number}=req.body
@@ -29,14 +29,11 @@ export const singUpValidation=(req:Request,res:Response,next:NextFunction)=>{
             return res.status(400).send(errors)
         }
         next()
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({error:"Internal Server Error"})
-    }
+
 }
 
 export const loginValidation=(req:Request,res:Response,next:NextFunction)=>{
-    try {
+
         let errors:{[keys:string]:string}={}
         // let emailFormate=/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
         const {email,password}=req.body
@@ -52,20 +49,20 @@ export const loginValidation=(req:Request,res:Response,next:NextFunction)=>{
             return res.status(400).send(errors)
         }
         next()
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({error:"Internal Server Error"})
-    }
+
 }
 
 export const authMiddleware=(req:RequestWithUser,res:Response,next:NextFunction)=>{
     try {
+        console.log('aaa')
         let jwtToken=null
         const authHeaders=req.headers['authorization']
+        console.log(authHeaders,'dsfsf')
         if(!authHeaders){
             return res.status(400).send({error:"Provide Token"})
         }
         jwtToken=authHeaders.split(' ')[1]
+        console.log(jwtToken)
         if(!jwtToken){
             return res.status(400).send({error:"Token not Provided"})
         }
@@ -74,6 +71,7 @@ export const authMiddleware=(req:RequestWithUser,res:Response,next:NextFunction)
                 return res.status(400).send({error:"Invalid Token"})
             }
             req.email=(payload as JwtPayload).email
+            console.log((payload as JwtPayload).email)
             next()
         })
     } catch (error) {
@@ -84,7 +82,7 @@ export const authMiddleware=(req:RequestWithUser,res:Response,next:NextFunction)
 
 
 export const addProductMiddleware=(req:Request,res:Response,next:NextFunction)=>{
-    try {
+
         const {name,productId,quantity,status,price,discountPrice}=req.body
         const errors=[]
         if(!name || name.trim().length==0){
@@ -93,25 +91,21 @@ export const addProductMiddleware=(req:Request,res:Response,next:NextFunction)=>
         else if(!productId  || productId.trim().length==0){
             errors.push({error:"Enter Valid Product id"})
         }
-        else if(!quantity ||quantity.trim().length==0){
+        else if(!quantity){
             errors.push({error:"Enter Quantity"})
         }
         else if(!status ||status.trim().length==0){
             errors.push({error:"Enter Product Status"})
         }
-        else if(!price ||price.trim().length==0){
+        else if(!price ){
             errors.push({error:"Enter product Price"})
         }
-        else if(!discountPrice||discountPrice.trim().length==0){
+        else if(!discountPrice){
             errors.push({error:"Enter discount price"})
         }
         if(errors&&errors.length>0){
             return res.status(400).send(errors)
         }
         next()
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({error:"Internal Server error"})
-    }
 }
 
